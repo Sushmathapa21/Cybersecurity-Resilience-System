@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+{% block content %}
+<!-- Hero Section -->
+<div class="hero-section position-relative">
+    <div class="hero-background"></div>
+    <div class="hero-overlay"></div>
+    <div class="container position-relative" style="z-index: 2;">
+        <div class="row justify-content-center align-items-center min-vh-75">
+            <div class="col-lg-8 text-center text-white">
+                <h1 class="hero-title mb-4">
+                    Welcome to Your Secure Dashboard!
+                </h1>
+                <p class="hero-subtitle mb-5">
+                    Manage your account security, review activity, and protect your digital identity with our comprehensive security suite.
+                </p>
+                <a href="{{ url_for('profile') }}" class="btn btn-hero btn-lg px-5 py-3">
+                    <i class="bi bi-shield-lock me-2"></i>Explore Security Settings
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Overview Section -->
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="row g-4">
+                <!-- Account Status Card -->
+                <div class="col-md-6">
+                    <div class="card glass-card h-100">
+                        <div class="card-body text-center">
+                            <div class="status-icon mb-3">
+                                <i class="bi bi-shield-check text-success fs-1"></i>
+                            </div>
+                            <h5 class="card-title">Account Status</h5>
+                            <p class="card-text">
+                                <span class="badge bg-success fs-6">{{ account_status }}</span>
+                            </p>
+                            <small class="text-muted">Your account is secure and active</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Last Login Card -->
+                <div class="col-md-6">
+                    <div class="card glass-card h-100">
+                        <div class="card-body text-center">
+                            <div class="status-icon mb-3">
+                                <i class="bi bi-clock-history text-primary fs-1"></i>
+                            </div>
+                            <h5 class="card-title">Last Login</h5>
+                            <p class="card-text">
+                                <span class="fw-bold">{{ last_login.strftime('%B %d, %Y at %I:%M %p') if last_login else 'Never' }}</span>
+                            </p>
+                            <small class="text-muted">From {{ request.remote_addr }}</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Activity Section -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card glass-card">
+                        <div class="card-header bg-transparent border-0">
+                            <h5 class="mb-0">
+                                <i class="bi bi-activity me-2"></i>Recent Login Activity
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            {% if recent_logins %}
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th><i class="bi bi-calendar me-1"></i>Date & Time</th>
+                                            <th><i class="bi bi-geo-alt me-1"></i>IP Address</th>
+                                            <th><i class="bi bi-laptop me-1"></i>Device</th>
+                                            <th><i class="bi bi-check-circle me-1"></i>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for log in recent_logins[:5] %}
+                                        <tr>
+                                            <td>{{ log.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
+                                            <td><code>{{ log.ip_address }}</code></td>
+                                            <td>{{ log.user_agent|truncate(40) }}</td>
+                                            <td>
+                                                {% if log.success %}
+                                                <span class="badge bg-success">Success</span>
+                                                {% else %}
+                                                <span class="badge bg-danger">Failed</span>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            {% else %}
+                            <div class="text-center text-muted py-4">
+                                <i class="bi bi-inbox fs-1 mb-3"></i>
+                                <p>No recent login activity found.</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Logout Modal -->
+<div class="modal fade" id="logoutModal" tabindex="-1" aria-labelledby="logoutModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="logoutModalLabel">Confirm Logout</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Are you sure you want to log out?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <a href="{{ url_for('logout') }}" class="btn btn-danger">Logout</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} 

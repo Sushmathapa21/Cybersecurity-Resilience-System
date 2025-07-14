@@ -1,0 +1,253 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-10">
+    <div class="card glass-card shadow-lg mt-4">
+      <div class="card-header bg-transparent border-0 pb-0">
+        <div class="text-center">
+          <div class="bg-primary bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+            <i class="bi bi-shield-lock text-white fs-1"></i>
+          </div>
+          <h2 class="mb-2">Setup Two-Factor Authentication</h2>
+          <p class="text-muted mb-0">Follow these steps to secure your account</p>
+        </div>
+      </div>
+      <div class="card-body">
+        <!-- Progress Indicator -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="progress" style="height: 8px;">
+              <div class="progress-bar bg-primary" role="progressbar" style="width: 50%;" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <div class="d-flex justify-content-between mt-2">
+              <small class="text-muted">Step 1: Scan QR Code</small>
+              <small class="text-muted">Step 2: Verify Setup</small>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6">
+            <div class="card border-0 bg-light mb-4">
+              <div class="card-body text-center">
+                <h5 class="card-title mb-3">
+                  <i class="bi bi-qr-code fs-1 text-primary mb-3"></i><br>
+                  Step 1: Scan QR Code
+                </h5>
+                <div class="qr-code-container mb-3">
+                  <div class="bg-white border rounded p-4 d-inline-block shadow-sm">
+                    {% if qr_code_base64 %}
+                      <img src="data:image/png;base64,{{ qr_code_base64 }}" alt="QR Code for 2FA Setup" class="img-fluid" style="max-width: 250px;">
+                    {% else %}
+                      <div class="text-center">
+                        <i class="bi bi-qr-code fs-1 text-muted"></i>
+                        <p class="text-muted small mt-2">QR Code Loading...</p>
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+                
+                <!-- Manual Entry Section -->
+                <div class="card border-info mt-3">
+                  <div class="card-header bg-info text-white">
+                    <h6 class="mb-0">
+                      <i class="bi bi-key me-2"></i>Manual Entry (Alternative)
+                    </h6>
+                  </div>
+                  <div class="card-body">
+                    <p class="text-muted small mb-2">
+                      <strong>Secret Key:</strong>
+                    </p>
+                    <div class="input-group">
+                      <input type="text" class="form-control text-center font-monospace" value="{{ totp_secret }}" readonly id="secretKey">
+                      <button class="btn btn-outline-secondary" type="button" onclick="copySecret()">
+                        <i class="bi bi-clipboard"></i>
+                      </button>
+                    </div>
+                    <small class="text-muted">Click to copy the secret key for manual entry in your app</small>
+                  </div>
+                </div>
+
+                <div class="alert alert-info mt-3">
+                  <i class="bi bi-info-circle me-2"></i>
+                  <strong>Instructions:</strong> 
+                  <ul class="mb-0 mt-2 small">
+                    <li>Open your authenticator app (Google Authenticator, Authy, etc.)</li>
+                    <li>Tap the "+" or "Add Account" button</li>
+                    <li>Choose "Scan QR Code" and point your camera at the code above</li>
+                    <li>Or choose "Manual Entry" and paste the secret key</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="col-md-6">
+            <div class="card border-0 bg-light">
+              <div class="card-body">
+                <h5 class="card-title mb-3">
+                  <i class="bi bi-phone me-2"></i>Step 2: Verify Setup
+                </h5>
+                <p class="text-muted mb-4">
+                  Once you've added the account to your authenticator app, enter the 6-digit code below to complete the setup.
+                </p>
+                
+                <form method="POST" autocomplete="off" id="verifyForm">
+                  {{ form.hidden_tag() }}
+                  <div class="mb-4">
+                    {{ form.code.label(class="form-label fw-bold") }}
+                    <div class="input-group input-group-lg">
+                      {{ form.code(class="form-control form-control-lg text-center font-monospace", placeholder="000000", maxlength="6", pattern="[0-9]{6}", style="font-size: 1.5rem; letter-spacing: 0.5rem;") }}
+                    </div>
+                    {% if form.code.errors %}
+                      {% for error in form.code.errors %}
+                        <div class="invalid-feedback d-block text-danger">
+                          <i class="bi bi-exclamation-circle me-1"></i>{{ error }}
+                        </div>
+                      {% endfor %}
+                    {% endif %}
+                    <div class="form-text">
+                      <i class="bi bi-lightbulb me-1"></i>
+                      <strong>Note:</strong> Codes refresh every 30 seconds. Make sure your app is synced.
+                    </div>
+                  </div>
+                  
+                  <div class="d-grid">
+                    {{ form.submit(class="btn btn-cool btn-lg") }}
+                  </div>
+                </form>
+                
+                <!-- Troubleshooting Section -->
+                <div class="mt-4">
+                  <div class="accordion" id="troubleshootingAccordion">
+                    <div class="accordion-item">
+                      <h2 class="accordion-header" id="troubleshootingHeader">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#troubleshootingCollapse">
+                          <i class="bi bi-question-circle me-2"></i>Having Trouble?
+                        </button>
+                      </h2>
+                      <div id="troubleshootingCollapse" class="accordion-collapse collapse" data-bs-parent="#troubleshootingAccordion">
+                        <div class="accordion-body">
+                          <h6>Common Issues:</h6>
+                          <ul class="small">
+                            <li><strong>Code not working?</strong> Make sure your device's time is synchronized</li>
+                            <li><strong>QR code not scanning?</strong> Try manual entry with the secret key above</li>
+                            <li><strong>App not showing codes?</strong> Try refreshing or restarting your authenticator app</li>
+                            <li><strong>Still having issues?</strong> Contact support for assistance</li>
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Security Notes -->
+        <div class="row mt-4">
+          <div class="col-12">
+            <div class="alert alert-warning">
+              <h6 class="alert-heading">
+                <i class="bi bi-exclamation-triangle me-2"></i>Security Notes
+              </h6>
+              <ul class="mb-0">
+                <li>Keep your authenticator app secure and don't share your device</li>
+                <li>Save the manual entry secret in a secure location as backup</li>
+                <li>If you lose access to your authenticator app, you may need to contact support</li>
+                <li>This setup uses industry-standard TOTP (Time-based One-Time Password) algorithm</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        
+        {% if recovery_codes %}
+        <div class="alert alert-warning text-center mt-4">
+          <h5 class="mb-3"><i class="bi bi-key me-2"></i>Recovery Codes</h5>
+          <p class="mb-2">Save these codes in a secure place. Each code can be used once if you lose access to your authenticator app.</p>
+          <div class="d-flex flex-wrap justify-content-center gap-2 mb-2">
+            {% for code in recovery_codes %}
+              <span class="badge bg-light text-dark border px-3 py-2 fs-5">{{ code }}</span>
+            {% endfor %}
+          </div>
+          <small class="text-muted">If you lose your authenticator, use a recovery code to log in. You can generate new codes from your profile.</small>
+        </div>
+        {% endif %}
+        
+        <div class="text-center mt-4">
+          <a href="{{ url_for('profile') }}#2fa" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Back to Profile
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Auto-focus on the verification code input
+document.addEventListener('DOMContentLoaded', function() {
+    const codeInput = document.querySelector('input[name="code"]');
+    if (codeInput) {
+        codeInput.focus();
+        
+        // Auto-format the code input to only allow numbers
+        codeInput.addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9]/g, '');
+            if (this.value.length > 6) {
+                this.value = this.value.slice(0, 6);
+            }
+            
+            // Auto-submit when 6 digits are entered
+            if (this.value.length === 6) {
+                setTimeout(() => {
+                    this.form.submit();
+                }, 500);
+            }
+        });
+        
+        // Handle paste events
+        codeInput.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+            const numbers = pastedText.replace(/[^0-9]/g, '').slice(0, 6);
+            this.value = numbers;
+            
+            if (numbers.length === 6) {
+                setTimeout(() => {
+                    this.form.submit();
+                }, 500);
+            }
+        });
+    }
+});
+
+// Copy secret key function
+function copySecret() {
+    const secretKey = document.getElementById('secretKey');
+    secretKey.select();
+    secretKey.setSelectionRange(0, 99999); // For mobile devices
+    
+    try {
+        document.execCommand('copy');
+        // Show feedback
+        const button = event.target.closest('button');
+        const originalText = button.innerHTML;
+        button.innerHTML = '<i class="bi bi-check"></i>';
+        button.classList.remove('btn-outline-secondary');
+        button.classList.add('btn-success');
+        
+        setTimeout(() => {
+            button.innerHTML = originalText;
+            button.classList.remove('btn-success');
+            button.classList.add('btn-outline-secondary');
+        }, 2000);
+    } catch (err) {
+        console.error('Failed to copy: ', err);
+    }
+}
+</script>
+{% endblock %} 

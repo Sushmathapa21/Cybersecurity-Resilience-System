@@ -1,0 +1,875 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-11">
+    <div class="card glass-card shadow-lg mt-4">
+      <div class="card-header bg-transparent border-0 pb-0">
+        <h2 class="mb-0">
+          <i class="bi bi-person-gear me-2"></i>Profile & Security Settings
+        </h2>
+        <p class="text-muted mt-2 mb-0">Manage your account security and preferences</p>
+      </div>
+      <div class="card-body">
+        <!-- Account Overview Section -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="card bg-light border-0">
+              <div class="card-body">
+                <h5 class="card-title mb-3">
+                  <i class="bi bi-person-circle me-2"></i>Account Overview
+                </h5>
+          <div class="row">
+                  <div class="col-md-3">
+                    <strong>Username:</strong><br>
+                    <span class="fw-bold text-primary">{{ session['username'] }}</span>
+                  </div>
+                  <div class="col-md-3">
+                    <strong>Email:</strong><br>
+                    <span class="fw-bold">{{ current_user.email if current_user else 'N/A' }}</span>
+                  </div>
+                  <div class="col-md-3">
+                    <strong>Status:</strong><br>
+                    <span class="badge {% if current_user and current_user.is_active %}bg-success{% else %}bg-danger{% endif %} fs-6">
+                      {% if current_user and current_user.is_active %}Active{% else %}Inactive{% endif %}
+                    </span>
+                  </div>
+                  <div class="col-md-3">
+                    <strong>Member Since:</strong><br>
+                    <span class="fw-bold">{{ current_user.created_at.strftime('%B %Y') if current_user else 'N/A' }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navigation Tabs -->
+        <ul class="nav nav-tabs nav-fill mb-4" id="profileTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="overview-tab" data-bs-toggle="tab" data-bs-target="#overview" type="button" role="tab">
+              <i class="bi bi-house me-1"></i>Overview
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="activities-tab" data-bs-toggle="tab" data-bs-target="#activities" type="button" role="tab">
+              <i class="bi bi-clock-history me-1"></i>Login Activities
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="password-tab" data-bs-toggle="tab" data-bs-target="#password" type="button" role="tab">
+              <i class="bi bi-key me-1"></i>Change Password
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="2fa-tab" data-bs-toggle="tab" data-bs-target="#2fa" type="button" role="tab">
+              <i class="bi bi-shield-lock me-1"></i>2FA Status
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="account-tab" data-bs-toggle="tab" data-bs-target="#account" type="button" role="tab">
+              <i class="bi bi-trash me-1"></i>Account Actions
+            </button>
+          </li>
+        </ul>
+
+        <!-- Tab Content -->
+        <div class="tab-content" id="profileTabsContent">
+          <!-- Overview Tab -->
+          <div class="tab-pane fade show active" id="overview" role="tabpanel">
+            <div class="row">
+              <div class="col-md-8">
+                <h4 class="mb-3">Account Summary</h4>
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <div class="card border-0 bg-light">
+                      <div class="card-body text-center">
+                        <i class="bi bi-shield-check text-success fs-1 mb-2"></i>
+                        <h6>Security Status</h6>
+                        <p class="mb-0">Your account is protected</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="card border-0 bg-light">
+                      <div class="card-body text-center">
+                        <i class="bi bi-clock text-primary fs-1 mb-2"></i>
+                        <h6>Last Login</h6>
+                        <p class="mb-0">{{ current_user.last_login_at.strftime('%B %d, %Y') if current_user and current_user.last_login_at else 'Never' }}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="card border-0 bg-light">
+                  <div class="card-body">
+                    <h6 class="mb-3">Quick Actions</h6>
+                    <div class="d-grid gap-2">
+                      <a href="#password" class="btn btn-outline-primary btn-sm" data-bs-toggle="tab" data-bs-target="#password">
+                        <i class="bi bi-key me-1"></i>Change Password
+                      </a>
+                      <a href="#activities" class="btn btn-outline-info btn-sm" data-bs-toggle="tab" data-bs-target="#activities">
+                        <i class="bi bi-clock-history me-1"></i>View Activities
+                      </a>
+                      {% if current_user.has_2fa %}
+                      <a href="#2fa" class="btn btn-outline-warning btn-sm" data-bs-toggle="tab" data-bs-target="#2fa">
+                        <i class="bi bi-shield-check me-1"></i>2FA Settings
+                      </a>
+                      {% else %}
+                      <a href="{{ url_for('welcome_2fa') }}" class="btn btn-outline-warning btn-sm">
+                        <i class="bi bi-shield-lock me-1"></i>Setup 2FA
+                      </a>
+                      {% endif %}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Login Activities Tab -->
+          <div class="tab-pane fade" id="activities" role="tabpanel">
+            <div class="row">
+              <div class="col-md-8">
+                <h4 class="mb-3">Login Activities</h4>
+                <div class="table-responsive">
+                  <table class="table table-hover" id="loginLogTable">
+                    <thead class="table-light">
+                      <tr>
+                        <th><i class="bi bi-calendar me-1"></i>Timestamp</th>
+                        <th><i class="bi bi-geo-alt me-1"></i>IP Address</th>
+                        <th><i class="bi bi-laptop me-1"></i>Device/Browser</th>
+                        <th><i class="bi bi-check-circle me-1"></i>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for log in login_logs %}
+                    <tr>
+                      <td>{{ log.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                        <td><code>{{ log.ip_address }}</code></td>
+                        <td>{{ log.user_agent|truncate(50) }}</td>
+                        <td>
+                          {% if log.success %}
+                          <span class="badge bg-success">Success</span>
+                          {% else %}
+                          <span class="badge bg-danger">Failure</span>
+                          {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="card border-0 bg-light">
+                  <div class="card-body">
+                    <h6 class="mb-3">
+                      <i class="bi bi-laptop me-1"></i>Active Sessions ({{ active_sessions|length }})
+                    </h6>
+                    {% if active_sessions %}
+                      <div class="mb-3">
+                        {% for session in active_sessions %}
+                          <div class="session-item mb-2 p-2 border rounded">
+                            <div class="d-flex justify-content-between align-items-start">
+                              <div class="flex-grow-1">
+                                <small class="text-muted d-block">
+                                  <i class="bi bi-geo-alt me-1"></i>{{ session.ip_address or 'Unknown IP' }}
+                                </small>
+                                <small class="text-muted d-block">
+                                  <i class="bi bi-clock me-1"></i>{{ session.last_activity.strftime('%Y-%m-%d %H:%M') }}
+                                </small>
+                                {% if session.user_agent %}
+                                  <small class="text-muted d-block">
+                                    <i class="bi bi-laptop me-1"></i>{{ session.user_agent|truncate(30) }}
+                                  </small>
+                                {% endif %}
+                              </div>
+                              {% if session.session_token == current_session_token %}
+                                <span class="badge bg-success">Current</span>
+                              {% else %}
+                                <span class="badge bg-primary">Active</span>
+                              {% endif %}
+                            </div>
+                          </div>
+                        {% endfor %}
+                      </div>
+                      {% if active_sessions|length > 1 %}
+                        <button class="btn btn-outline-danger btn-sm w-100" id="logoutOthersBtn" data-bs-toggle="modal" data-bs-target="#logoutOthersModal">
+                          <i class="bi bi-box-arrow-right me-1"></i>End All Other Sessions
+                        </button>
+                      {% else %}
+                        <button class="btn btn-outline-secondary btn-sm w-100" disabled>
+                          <i class="bi bi-box-arrow-right me-1"></i>No Other Sessions
+                        </button>
+                      {% endif %}
+                    {% else %}
+                      <div class="text-muted">
+                        <small>No active sessions found.</small>
+                      </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Change Password Tab -->
+          <div class="tab-pane fade" id="password" role="tabpanel">
+            <div class="row justify-content-center">
+              <div class="col-md-8">
+                <h4 class="mb-3">Change Password</h4>
+            <form method="POST" action="{{ url_for('profile') }}#password" autocomplete="off">
+              {{ change_password_form.hidden_tag() }}
+              <div class="mb-3">
+                {{ change_password_form.old_password.label(class="form-label") }}
+                <div class="input-group">
+                      <input type="password" 
+                             class="form-control{{ ' is-invalid' if change_password_form.old_password.errors else '' }}" 
+                             id="old_password" 
+                             name="old_password"
+                             placeholder="Enter your current password" 
+                             value="{{ preserved_old_password or change_password_form.old_password.data or '' }}" 
+                             required>
+                      <button class="btn btn-outline-secondary" type="button" id="toggleOldPassword">
+                        <i class="bi bi-eye-slash"></i>
+                      </button>
+                </div>
+                    {% if change_password_form.old_password.errors %}
+                      {% for error in change_password_form.old_password.errors %}
+                        <div class="invalid-feedback d-block">{{ error }}</div>
+                      {% endfor %}
+                    {% endif %}
+              </div>
+              <div class="mb-3">
+                {{ change_password_form.new_password.label(class="form-label") }}
+                <div class="input-group">
+                      {{ change_password_form.new_password(class="form-control" + (" is-invalid" if change_password_form.new_password.errors else ""), id="new_password", placeholder="Enter your new password", value=change_password_form.new_password.data or "") }}
+                      <button class="btn btn-outline-secondary" type="button" id="toggleNewPassword">
+                        <i class="bi bi-eye-slash"></i>
+                      </button>
+                </div>
+                    {% if change_password_form.new_password.errors %}
+                      {% for error in change_password_form.new_password.errors %}
+                        <div class="invalid-feedback d-block">{{ error }}</div>
+                      {% endfor %}
+                    {% endif %}
+                    <div id="password-strength-meter-profile" class="mt-1"></div>
+                    <div id="password-strength-bar-profile" class="password-strength-bar"></div>
+              </div>
+              <div class="mb-3">
+                {{ change_password_form.confirm_new_password.label(class="form-label") }}
+                <div class="input-group">
+                      {{ change_password_form.confirm_new_password(class="form-control" + (" is-invalid" if change_password_form.confirm_new_password.errors else ""), id="confirm_new_password", placeholder="Confirm your new password", value=change_password_form.confirm_new_password.data or "") }}
+                      <button class="btn btn-outline-secondary" type="button" id="toggleConfirmNewPassword">
+                        <i class="bi bi-eye-slash"></i>
+                      </button>
+                    </div>
+                    {% if change_password_form.confirm_new_password.errors %}
+                      {% for error in change_password_form.confirm_new_password.errors %}
+                        <div class="invalid-feedback d-block">{{ error }}</div>
+                      {% endfor %}
+                    {% endif %}
+                  </div>
+                  <button type="submit" class="btn btn-cool">
+                    <i class="bi bi-check-circle me-1"></i>Change Password
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2FA Status Tab -->
+          <div class="tab-pane fade" id="2fa" role="tabpanel">
+            <div class="row justify-content-center">
+              <div class="col-md-8">
+                <h4 class="mb-3">Two-Factor Authentication (2FA)</h4>
+                
+                {% if current_user.has_2fa %}
+                <!-- 2FA Enabled State -->
+                <div class="card border-success">
+                  <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">
+                      <i class="bi bi-shield-check me-2"></i>2FA Status: <span class="badge bg-light text-success">Enabled</span>
+                    </h5>
+                  </div>
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-md-8">
+                        <p class="text-muted mb-3">
+                          Your account is protected with two-factor authentication. You'll need to enter a verification code from your authenticator app when logging in.
+                        </p>
+                        <div class="alert alert-success">
+                          <i class="bi bi-check-circle me-2"></i>
+                          <strong>Security Enhanced:</strong> Your account now has an additional layer of protection.
+                        </div>
+                        
+                        <!-- Recovery Codes Section -->
+                        <div class="card border-warning mt-4">
+                          <div class="card-header bg-warning text-dark">
+                            <h6 class="mb-0"><i class="bi bi-key me-2"></i>Recovery Codes</h6>
+                          </div>
+                          <div class="card-body">
+                            <p class="text-muted mb-2">Below are your current recovery codes. Each code can be used once if you lose access to your authenticator app.</p>
+                            <div class="d-flex flex-wrap gap-2 mb-2">
+                              {% for code in recovery_codes %}
+                                <span class="badge bg-light text-dark border px-3 py-2 fs-6">{{ code }}</span>
+                              {% endfor %}
+                            </div>
+                            <button class="btn btn-outline-warning btn-sm mt-2" disabled>Generate New Recovery Codes (Conceptual)</button>
+                            <div class="form-text mt-2">To generate new codes, you would need to re-authenticate. (Conceptual for prototype)</div>
+                          </div>
+                        </div>
+                        
+                        <!-- Device Trust Status -->
+                        {% if current_user.trusted_device_uuid %}
+                        <div class="alert alert-info mt-3">
+                          <i class="bi bi-device-hdd me-2"></i>
+                          <strong>Trusted Device:</strong> This device is trusted for 30 days and won't require 2FA codes during login.
+                        </div>
+                        {% endif %}
+                      </div>
+                      <div class="col-md-4 text-center">
+                        <i class="bi bi-shield-check text-success fs-1 mb-3"></i>
+                        <div class="d-grid gap-2">
+                          <button type="button" class="btn btn-outline-danger" id="disable2FABtn" data-bs-toggle="modal" data-bs-target="#disable2FAModal">
+                            <i class="bi bi-shield-x me-1"></i>Disable 2FA
+                          </button>
+                          <button type="button" class="btn btn-outline-warning btn-sm" id="forgetDeviceBtn">
+                            <i class="bi bi-device-hdd-x me-1"></i>Forget This Device
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {% else %}
+                <!-- 2FA Disabled State -->
+                <div class="card border-warning">
+                  <div class="card-header bg-warning text-dark">
+                    <h5 class="mb-0">
+                      <i class="bi bi-shield-lock me-2"></i>2FA Status: <span class="badge bg-secondary">Disabled</span>
+                    </h5>
+                  </div>
+                  <div class="card-body">
+                    <div class="row">
+                      <div class="col-md-8">
+                        <p class="text-muted mb-3">
+                          Two-factor authentication adds an extra layer of security to your account by requiring a second form of verification in addition to your password.
+                        </p>
+                        <div class="alert alert-info">
+                          <i class="bi bi-info-circle me-2"></i>
+                          <strong>Recommended:</strong> Enable 2FA to protect your account from unauthorized access.
+                        </div>
+                        <h6 class="mb-2">Benefits of 2FA:</h6>
+                        <ul class="text-muted">
+                          <li>Protects against password theft</li>
+                          <li>Prevents unauthorized account access</li>
+                          <li>Adds an extra verification step</li>
+                          <li>Works with popular authenticator apps</li>
+                        </ul>
+                      </div>
+                      <div class="col-md-4 text-center">
+                        <i class="bi bi-shield-lock text-warning fs-1 mb-3"></i>
+                        <div class="d-grid">
+                          <a href="{{ url_for('welcome_2fa') }}" class="btn btn-cool">
+                            <i class="bi bi-shield-lock me-1"></i>Enable 2FA
+                          </a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {% endif %}
+              </div>
+          </div>
+          </div>
+
+          <!-- Account Actions Tab -->
+          <div class="tab-pane fade" id="account" role="tabpanel">
+            <div class="row justify-content-center">
+              <div class="col-md-8">
+                <h4 class="mb-3">Account Actions</h4>
+                <div class="card border-danger">
+                  <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">
+                      <i class="bi bi-exclamation-triangle me-2"></i>Danger Zone
+                    </h5>
+                  </div>
+                  <div class="card-body">
+                    <p class="text-muted mb-3">
+                      These actions are irreversible and will permanently delete your account and all associated data.
+                    </p>
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                      <i class="bi bi-trash me-1"></i>Delete Account
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Logout Others Modal -->
+<div class="modal fade" id="logoutOthersModal" tabindex="-1" aria-labelledby="logoutOthersModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="logoutOthersModalLabel">End All Other Sessions</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to end all other active sessions for your account? This will log out all other devices and require re-login.</p>
+        <div class="alert alert-warning">
+          <i class="bi bi-exclamation-triangle me-2"></i>
+          <strong>Note:</strong> This action will not affect your current session.
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-warning" id="confirmLogoutOthers">End All Other Sessions</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Account Modal -->
+<div class="modal fade" id="deleteAccountModal" tabindex="-1" aria-labelledby="deleteAccountModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-danger text-white">
+        <h5 class="modal-title" id="deleteAccountModalLabel">
+          <i class="bi bi-exclamation-triangle me-2"></i>Confirm Account Deletion
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-danger">
+          <h6><i class="bi bi-exclamation-triangle me-2"></i>Warning: This action cannot be undone!</h6>
+          <p class="mb-0">Permanently deleting your account will:</p>
+          <ul class="mb-0 mt-2">
+            <li>Remove all your data and login history</li>
+            <li>Cancel any pending operations</li>
+            <li>Log you out immediately</li>
+          </ul>
+        </div>
+        <p>Are you absolutely sure you want to proceed?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-danger" id="confirmDeleteAccount">
+          <i class="bi bi-trash me-1"></i>Delete Account
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Disable 2FA Modal -->
+<div class="modal fade" id="disable2FAModal" tabindex="-1" aria-labelledby="disable2FAModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-warning text-dark">
+        <h5 class="modal-title" id="disable2FAModalLabel">
+          <i class="bi bi-shield-x me-2"></i>Disable Two-Factor Authentication
+        </h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-warning">
+          <h6><i class="bi bi-exclamation-triangle me-2"></i>Security Warning</h6>
+          <p class="mb-0">Disabling 2FA will:</p>
+          <ul class="mb-0 mt-2">
+            <li>Remove the extra security layer from your account</li>
+            <li>Make your account more vulnerable to unauthorized access</li>
+            <li>Require only password for future logins</li>
+          </ul>
+        </div>
+        <p>Are you sure you want to disable two-factor authentication?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-warning" id="confirmDisable2FA">
+          <i class="bi bi-shield-x me-1"></i>Disable 2FA
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Handle tab navigation from URL hash
+document.addEventListener('DOMContentLoaded', function() {
+    const hash = window.location.hash;
+    if (hash) {
+        const tab = document.querySelector(`[data-bs-target="${hash}"]`);
+        if (tab) {
+            const tabInstance = new bootstrap.Tab(tab);
+            tabInstance.show();
+        }
+    }
+});
+
+// 2FA message function
+function show2FAMessage() {
+    alert('2FA setup is a feature for future development. See report for conceptual details.');
+}
+
+// AJAX for 'End All Other Sessions' button
+const confirmLogoutOthers = document.getElementById('confirmLogoutOthers');
+if (confirmLogoutOthers) {
+    confirmLogoutOthers.addEventListener('click', function() {
+        // Get CSRF token for AJAX calls
+        const csrfToken = document.querySelector('meta[name=csrf-token]')?.content || document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
+
+        fetch('/logout_others', {
+      method: 'POST',
+            headers: { 
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json'
+            },
+    })
+    .then(response => response.json())
+    .then(data => {
+            if (data.success) {
+                // Close modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('logoutOthersModal'));
+                if (modal) modal.hide();
+
+                // Display success message
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-success alert-dismissible fade show mt-3';
+                alertDiv.innerHTML = `
+                    <i class="bi bi-check-circle me-2"></i>${data.message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                
+                // Insert after the main profile card, or at the top of the container
+                const profileCard = document.querySelector('.card.glass-card.shadow-lg');
+                if (profileCard) {
+                    profileCard.parentNode.insertBefore(alertDiv, profileCard.nextSibling);
+                } else {
+                    // Fallback: insert at the top of the container
+                    document.querySelector('.container').insertBefore(alertDiv, document.querySelector('.container').firstChild);
+                }
+
+                // Refresh the page after a short delay to show updated session information
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            } else {
+                // Handle error response
+                console.error('Server error:', data);
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-danger alert-dismissible fade show mt-3';
+                alertDiv.innerHTML = `
+                    <i class="bi bi-exclamation-triangle me-2"></i>${data.message || 'Failed to end other sessions.'}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                
+                const profileCard = document.querySelector('.card.glass-card.shadow-lg');
+                if (profileCard) {
+                    profileCard.parentNode.insertBefore(alertDiv, profileCard.nextSibling);
+                } else {
+                    document.querySelector('.container').insertBefore(alertDiv, document.querySelector('.container').firstChild);
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            // Show error message without alert popup
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-danger alert-dismissible fade show mt-3';
+            alertDiv.innerHTML = `
+                <i class="bi bi-exclamation-triangle me-2"></i>An error occurred while ending other sessions.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            const profileCard = document.querySelector('.card.glass-card.shadow-lg');
+            if (profileCard) {
+                profileCard.parentNode.insertBefore(alertDiv, profileCard.nextSibling);
+            } else {
+                document.querySelector('.container').insertBefore(alertDiv, document.querySelector('.container').firstChild);
+            }
+        });
+    });
+}
+
+// AJAX for account deletion
+const confirmDeleteAccount = document.getElementById('confirmDeleteAccount');
+if (confirmDeleteAccount) {
+  confirmDeleteAccount.addEventListener('click', function() {
+        // Get CSRF token for AJAX calls
+        const csrfToken = document.querySelector('meta[name=csrf-token]')?.content || document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
+
+        fetch('/delete_account', {
+      method: 'POST',
+            headers: { 
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json'
+            },
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+                // Close modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('deleteAccountModal'));
+                if (modal) modal.hide();
+
+                // Show success message
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-success alert-dismissible fade show mt-3';
+                alertDiv.innerHTML = `
+                    <i class="bi bi-check-circle me-2"></i>Account deleted successfully! Redirecting to registration page...
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                
+                // Insert after the main profile card
+                const profileCard = document.querySelector('.card.glass-card.shadow-lg');
+                if (profileCard) {
+                    profileCard.parentNode.insertBefore(alertDiv, profileCard.nextSibling);
+                } else {
+                    document.querySelector('.container').insertBefore(alertDiv, document.querySelector('.container').firstChild);
+                }
+
+                // Redirect after a short delay
+                setTimeout(() => {
+        window.location.href = data.redirect_url;
+                }, 2000);
+            } else {
+                // Handle error response
+                console.error('Server error:', data);
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-danger alert-dismissible fade show mt-3';
+                alertDiv.innerHTML = `
+                    <i class="bi bi-exclamation-triangle me-2"></i>${data.message || 'Failed to delete account.'}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                
+                const profileCard = document.querySelector('.card.glass-card.shadow-lg');
+                if (profileCard) {
+                    profileCard.parentNode.insertBefore(alertDiv, profileCard.nextSibling);
+                } else {
+                    document.querySelector('.container').insertBefore(alertDiv, document.querySelector('.container').firstChild);
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            // Show error message
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-danger alert-dismissible fade show mt-3';
+            alertDiv.innerHTML = `
+                <i class="bi bi-exclamation-triangle me-2"></i>An error occurred while deleting your account. Please try again.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            const profileCard = document.querySelector('.card.glass-card.shadow-lg');
+            if (profileCard) {
+                profileCard.parentNode.insertBefore(alertDiv, profileCard.nextSibling);
+      } else {
+                document.querySelector('.container').insertBefore(alertDiv, document.querySelector('.container').firstChild);
+            }
+        });
+    });
+}
+
+// Password strength meter for change password form
+const newPasswordInput = document.getElementById('new_password');
+const passwordStrengthMeter = document.getElementById('password-strength-meter-profile');
+
+if (newPasswordInput && passwordStrengthMeter) {
+    newPasswordInput.addEventListener('input', function() {
+        const val = this.value;
+        const score = scorePassword(val);
+        const label = labelScore(score);
+        
+        if (!val) {
+            passwordStrengthMeter.textContent = '';
+            return;
+        }
+        
+        passwordStrengthMeter.textContent = 'Strength: ' + label;
+        passwordStrengthMeter.className = 'password-strength-meter ' + label.toLowerCase().replace(' ', '-');
+    });
+}
+
+// Recovery Codes Generation
+const generateRecoveryCodesBtn = document.getElementById('generateRecoveryCodes');
+if (generateRecoveryCodesBtn) {
+    generateRecoveryCodesBtn.addEventListener('click', function() {
+        // Generate 8 random recovery codes (conceptual implementation)
+        const codes = [];
+        for (let i = 0; i < 8; i++) {
+            const code = Math.random().toString(36).substring(2, 8).toUpperCase() + 
+                        Math.random().toString(36).substring(2, 8).toUpperCase();
+            codes.push(code);
+        }
+        
+        // Display the codes
+        const displayDiv = document.getElementById('recoveryCodesDisplay');
+        const codesList = document.getElementById('recoveryCodesList');
+        
+        codesList.textContent = codes.join('  ');
+        displayDiv.style.display = 'block';
+        
+        // Show success message
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-success alert-dismissible fade show mt-3';
+        alertDiv.innerHTML = `
+            <i class="bi bi-check-circle me-2"></i>Recovery codes generated successfully! Save them in a secure location.
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        const profileCard = document.querySelector('.card.glass-card.shadow-lg');
+        if (profileCard) {
+            profileCard.parentNode.insertBefore(alertDiv, profileCard.nextSibling);
+        }
+    });
+}
+
+// Forget Device Button
+const forgetDeviceBtn = document.getElementById('forgetDeviceBtn');
+if (forgetDeviceBtn) {
+    forgetDeviceBtn.addEventListener('click', function() {
+        if (confirm('Are you sure you want to forget this device? You will need to enter 2FA codes on your next login.')) {
+            // Get CSRF token for AJAX calls
+            const csrfToken = document.querySelector('meta[name=csrf-token]')?.content || document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
+
+            fetch('/profile/2fa/forget_device', {
+                method: 'POST',
+                headers: { 
+                    'X-CSRFToken': csrfToken,
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Show success message
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert alert-success alert-dismissible fade show mt-3';
+                    alertDiv.innerHTML = `
+                        <i class="bi bi-check-circle me-2"></i>${data.message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    `;
+                    
+                    const profileCard = document.querySelector('.card.glass-card.shadow-lg');
+                    if (profileCard) {
+                        profileCard.parentNode.insertBefore(alertDiv, profileCard.nextSibling);
+                    }
+                    
+                    // Refresh the page to update the UI
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                } else {
+                    // Handle error response
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert alert-danger alert-dismissible fade show mt-3';
+                    alertDiv.innerHTML = `
+                        <i class="bi bi-exclamation-triangle me-2"></i>${data.message || 'Failed to forget device.'}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    `;
+                    
+                    const profileCard = document.querySelector('.card.glass-card.shadow-lg');
+                    if (profileCard) {
+                        profileCard.parentNode.insertBefore(alertDiv, profileCard.nextSibling);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-danger alert-dismissible fade show mt-3';
+                alertDiv.innerHTML = `
+                    <i class="bi bi-exclamation-triangle me-2"></i>An error occurred while forgetting the device.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                
+                const profileCard = document.querySelector('.card.glass-card.shadow-lg');
+                if (profileCard) {
+                    profileCard.parentNode.insertBefore(alertDiv, profileCard.nextSibling);
+                }
+            });
+        }
+    });
+}
+
+// Disable 2FA AJAX
+const confirmDisable2FA = document.getElementById('confirmDisable2FA');
+if (confirmDisable2FA) {
+    confirmDisable2FA.addEventListener('click', function() {
+        // Get CSRF token for AJAX calls
+        const csrfToken = document.querySelector('meta[name=csrf-token]')?.content || document.cookie.match(/csrftoken=([^;]+)/)?.[1] || '';
+
+        fetch('/profile/2fa/disable', {
+            method: 'POST',
+            headers: { 
+                'X-CSRFToken': csrfToken,
+                'Content-Type': 'application/json'
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Close modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('disable2FAModal'));
+                if (modal) modal.hide();
+
+                // Show success message
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-success alert-dismissible fade show mt-3';
+                alertDiv.innerHTML = `
+                    <i class="bi bi-check-circle me-2"></i>${data.message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                
+                const profileCard = document.querySelector('.card.glass-card.shadow-lg');
+                if (profileCard) {
+                    profileCard.parentNode.insertBefore(alertDiv, profileCard.nextSibling);
+                }
+                
+                // Refresh the page to update the UI
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            } else {
+                // Handle error response
+                const alertDiv = document.createElement('div');
+                alertDiv.className = 'alert alert-danger alert-dismissible fade show mt-3';
+                alertDiv.innerHTML = `
+                    <i class="bi bi-exclamation-triangle me-2"></i>${data.message || 'Failed to disable 2FA.'}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+                
+                const profileCard = document.querySelector('.card.glass-card.shadow-lg');
+                if (profileCard) {
+                    profileCard.parentNode.insertBefore(alertDiv, profileCard.nextSibling);
+                }
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            const alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-danger alert-dismissible fade show mt-3';
+            alertDiv.innerHTML = `
+                <i class="bi bi-exclamation-triangle me-2"></i>An error occurred while disabling 2FA.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+            
+            const profileCard = document.querySelector('.card.glass-card.shadow-lg');
+            if (profileCard) {
+                profileCard.parentNode.insertBefore(alertDiv, profileCard.nextSibling);
+      }
+    });
+  });
+}
+</script>
+{% endblock %} 

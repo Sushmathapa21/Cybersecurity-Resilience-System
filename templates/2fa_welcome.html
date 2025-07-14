@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card glass-card shadow-lg mt-4">
+      <div class="card-header bg-transparent border-0 pb-0">
+        <div class="text-center">
+          <div class="bg-primary bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+            <i class="bi bi-shield-lock text-white fs-1"></i>
+          </div>
+          <h2 class="mb-2">Secure Your Account with 2FA</h2>
+          <p class="text-muted mb-0">Add an extra layer of protection to keep your account safe</p>
+        </div>
+      </div>
+      <div class="card-body">
+        <!-- What is 2FA Section -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="alert alert-info border-0">
+              <h5 class="alert-heading">
+                <i class="bi bi-info-circle me-2"></i>What is Two-Factor Authentication?
+              </h5>
+              <p class="mb-0">
+                Two-Factor Authentication (2FA) adds an extra layer of security to your account. 
+                Instead of just using your password, you'll also need a unique 6-digit code from your phone 
+                to log in. This makes it much harder for unauthorized users to access your account.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- How it Works Section -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <h4 class="mb-3">
+              <i class="bi bi-gear me-2"></i>How 2FA Works
+            </h4>
+            <div class="row g-3">
+              <div class="col-md-4">
+                <div class="card border-0 bg-light h-100">
+                  <div class="card-body text-center">
+                    <div class="bg-primary bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                      <i class="bi bi-1-circle text-white fs-4"></i>
+                    </div>
+                    <h6>Enter Password</h6>
+                    <p class="small text-muted mb-0">Log in with your username and password as usual</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="card border-0 bg-light h-100">
+                  <div class="card-body text-center">
+                    <div class="bg-primary bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                      <i class="bi bi-2-circle text-white fs-4"></i>
+                    </div>
+                    <h6>Get Code</h6>
+                    <p class="small text-muted mb-0">Open your authenticator app to get a 6-digit code</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="card border-0 bg-light h-100">
+                  <div class="card-body text-center">
+                    <div class="bg-primary bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                      <i class="bi bi-3-circle text-white fs-4"></i>
+                    </div>
+                    <h6>Enter Code</h6>
+                    <p class="small text-muted mb-0">Enter the code to complete your login</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Supported Apps Section -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <h4 class="mb-3">
+              <i class="bi bi-phone me-2"></i>Supported Authenticator Apps
+            </h4>
+            <div class="row g-3">
+              <div class="col-md-3 col-6">
+                <div class="card border-0 bg-light text-center">
+                  <div class="card-body">
+                    <i class="bi bi-google text-danger fs-1 mb-2"></i>
+                    <h6>Google Authenticator</h6>
+                    <p class="small text-muted mb-0">Free, widely used</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 col-6">
+                <div class="card border-0 bg-light text-center">
+                  <div class="card-body">
+                    <i class="bi bi-phone text-primary fs-1 mb-2"></i>
+                    <h6>Authy</h6>
+                    <p class="small text-muted mb-0">Cloud backup, multi-device</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 col-6">
+                <div class="card border-0 bg-light text-center">
+                  <div class="card-body">
+                    <i class="bi bi-microsoft text-success fs-1 mb-2"></i>
+                    <h6>Microsoft Authenticator</h6>
+                    <p class="small text-muted mb-0">Windows integration</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-3 col-6">
+                <div class="card border-0 bg-light text-center">
+                  <div class="card-body">
+                    <i class="bi bi-apple text-dark fs-1 mb-2"></i>
+                    <h6>Apple Authenticator</h6>
+                    <p class="small text-muted mb-0">iOS integration</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Security Benefits Section -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <h4 class="mb-3">
+              <i class="bi bi-shield-check me-2"></i>Security Benefits
+            </h4>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <div class="d-flex align-items-start">
+                  <i class="bi bi-check-circle-fill text-success fs-5 me-3 mt-1"></i>
+                  <div>
+                    <h6>Protection Against Password Theft</h6>
+                    <p class="small text-muted mb-0">Even if someone gets your password, they can't access your account without the 2FA code.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="d-flex align-items-start">
+                  <i class="bi bi-check-circle-fill text-success fs-5 me-3 mt-1"></i>
+                  <div>
+                    <h6>Real-Time Alerts</h6>
+                    <p class="small text-muted mb-0">You'll know immediately if someone tries to access your account.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="d-flex align-items-start">
+                  <i class="bi bi-check-circle-fill text-success fs-5 me-3 mt-1"></i>
+                  <div>
+                    <h6>Industry Standard Security</h6>
+                    <p class="small text-muted mb-0">Uses the same TOTP technology used by banks and major tech companies.</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="d-flex align-items-start">
+                  <i class="bi bi-check-circle-fill text-success fs-5 me-3 mt-1"></i>
+                  <div>
+                    <h6>Easy to Use</h6>
+                    <p class="small text-muted mb-0">Just scan a QR code and you're set up in seconds.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Setup Process Section -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <h4 class="mb-3">
+              <i class="bi bi-list-check me-2"></i>Setup Process
+            </h4>
+            <div class="alert alert-light border">
+              <ol class="mb-0">
+                <li class="mb-2"><strong>Download an authenticator app</strong> from your device's app store (Google Authenticator, Authy, etc.)</li>
+                <li class="mb-2"><strong>Scan the QR code</strong> that will appear on the next page with your authenticator app</li>
+                <li class="mb-2"><strong>Enter the 6-digit code</strong> from your app to verify the setup</li>
+                <li class="mb-0"><strong>You're all set!</strong> Your account is now protected with 2FA</li>
+              </ol>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="row">
+          <div class="col-12 text-center">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+              <a href="{{ url_for('enable_2fa') }}" class="btn btn-cool btn-lg px-5">
+                <i class="bi bi-shield-lock me-2"></i>Start 2FA Setup
+              </a>
+              <a href="{{ url_for('profile') }}#2fa" class="btn btn-outline-secondary btn-lg px-5">
+                <i class="bi bi-arrow-left me-2"></i>Maybe Later
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Additional Info -->
+        <div class="row mt-4">
+          <div class="col-12">
+            <div class="alert alert-warning border-0">
+              <h6 class="alert-heading">
+                <i class="bi bi-exclamation-triangle me-2"></i>Important Notes
+              </h6>
+              <ul class="mb-0 small">
+                <li>Keep your authenticator app secure and don't share your device</li>
+                <li>Save the backup codes in a secure location</li>
+                <li>If you lose access to your authenticator app, contact support immediately</li>
+                <li>You can disable 2FA anytime from your profile settings</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} 

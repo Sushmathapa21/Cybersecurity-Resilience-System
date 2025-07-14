@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-6 col-md-8">
+    <div class="card glass-card shadow-lg mt-5">
+      <div class="card-header bg-transparent border-0 pb-0">
+        <h2 class="mb-0 text-center">
+          <i class="bi bi-shield-lock me-2 text-primary"></i>Two-Factor Authentication
+        </h2>
+        <p class="text-muted mt-2 mb-0 text-center">Enter the 6-digit code from your authenticator app</p>
+      </div>
+      <div class="card-body">
+        <div class="text-center mb-4">
+          <div class="bg-light rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+            <i class="bi bi-phone fs-1 text-primary"></i>
+          </div>
+        </div>
+        
+        <form method="POST" autocomplete="off">
+          {{ form.hidden_tag() }}
+          
+          <div class="mb-4">
+            {{ form.code.label(class="form-label fw-bold") }}
+            <div class="input-group input-group-lg">
+              {{ form.code(class="form-control form-control-lg text-center", placeholder="000000", maxlength="6", pattern="[0-9]{6}", style="font-size: 1.5rem; letter-spacing: 0.5rem;") }}
+            </div>
+            {% if form.code.errors %}
+              {% for error in form.code.errors %}
+                <div class="invalid-feedback d-block text-danger">
+                  <i class="bi bi-exclamation-circle me-1"></i>{{ error }}
+                </div>
+              {% endfor %}
+            {% endif %}
+            <div class="form-text">
+              <i class="bi bi-lightbulb me-1"></i>
+              Enter the 6-digit code from your authenticator app (Google Authenticator, Authy, etc.)
+            </div>
+          </div>
+          
+          <div class="mb-4">
+            <div class="form-check">
+              {{ form.remember_device(class="form-check-input") }}
+              {{ form.remember_device.label(class="form-check-label") }}
+            </div>
+            <div class="form-text">
+              <i class="bi bi-info-circle me-1"></i>
+              This device will be trusted for 30 days and you won't need to enter 2FA codes during login.
+            </div>
+          </div>
+          
+          <div id="recovery-code-section" style="display:none;">
+            <div class="mb-3">
+              <label for="recovery_code" class="form-label">Recovery Code</label>
+              <input type="text" class="form-control text-center" name="recovery_code" id="recovery_code" placeholder="Enter a recovery code">
+              <div class="form-text">Enter one of your saved recovery codes to log in if you lost your authenticator app.</div>
+            </div>
+          </div>
+          
+          <div class="d-grid gap-2">
+            {{ form.submit(class="btn btn-cool btn-lg") }}
+            <button type="button" class="btn btn-outline-secondary btn-sm mt-2" id="toggleRecoveryCode">Use Recovery Code Instead</button>
+          </div>
+        </form>
+        
+        <div class="mt-4">
+          <div class="alert alert-info">
+            <h6 class="alert-heading">
+              <i class="bi bi-question-circle me-2"></i>Need Help?
+            </h6>
+            <ul class="mb-0 small">
+              <li>Make sure your authenticator app is synced with the correct time</li>
+              <li>Codes refresh every 30 seconds</li>
+              <li>If you're having trouble, try refreshing your authenticator app</li>
+            </ul>
+          </div>
+        </div>
+        
+        <div class="text-center mt-4">
+          <a href="{{ url_for('login') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left me-1"></i>Back to Login
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const codeInput = document.querySelector('input[name="code"]');
+    if (codeInput) {
+        codeInput.focus();
+        
+        // Auto-format the code input to only allow numbers
+        codeInput.addEventListener('input', function() {
+            this.value = this.value.replace(/[^0-9]/g, '');
+            if (this.value.length > 6) {
+                this.value = this.value.slice(0, 6);
+            }
+            
+            // Auto-submit when 6 digits are entered
+            if (this.value.length === 6) {
+                setTimeout(() => {
+                    this.form.submit();
+                }, 500);
+            }
+        });
+        
+        // Handle paste events
+        codeInput.addEventListener('paste', function(e) {
+            e.preventDefault();
+            const pastedText = (e.clipboardData || window.clipboardData).getData('text');
+            const numbers = pastedText.replace(/[^0-9]/g, '').slice(0, 6);
+            this.value = numbers;
+            
+            if (numbers.length === 6) {
+                setTimeout(() => {
+                    this.form.submit();
+                }, 500);
+            }
+        });
+    }
+});
+
+document.getElementById('toggleRecoveryCode').onclick = function() {
+  var section = document.getElementById('recovery-code-section');
+  if (section.style.display === 'none') {
+    section.style.display = '';
+    this.innerText = 'Use Authenticator App Instead';
+  } else {
+    section.style.display = 'none';
+    this.innerText = 'Use Recovery Code Instead';
+  }
+};
+</script>
+{% endblock %} 

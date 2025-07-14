@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <div class="card glass-card shadow-lg">
+      <div class="card-body">
+        <div class="text-center mb-4">
+          <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" height="50">
+          <h3 class="mt-2">Login</h3>
+        </div>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <p class="text-center small mb-4">Note: Accounts must be activated via email before you can log in.</p>
+
+        <form method="POST" action="{{ url_for('login') }}" novalidate>
+          {{ form.hidden_tag() }}
+          <div class="mb-3">
+            {{ form.username.label(class="form-label") }}
+            <input type="text" class="form-control" id="username_or_email" name="username" placeholder="Enter your username or email" required>
+            <div id="login-username-feedback" class="invalid-feedback"></div>
+          </div>
+          <div class="mb-3 position-relative">
+            {{ form.password.label(class="form-label") }}
+            <div class="input-group">
+              <input type="password" class="form-control" id="login_password" name="password" placeholder="Enter your password" required>
+              <button class="btn btn-outline-secondary" type="button" id="toggleLoginPassword">
+                <i class="bi bi-eye-slash"></i>
+              </button>
+            </div>
+            <div id="login-password-feedback" class="invalid-feedback"></div>
+          </div>
+          <div class="d-grid">
+            {{ form.submit(class="btn btn-cool") }}
+          </div>
+        </form>
+        <div class="text-center mt-3">
+          <a href="{{ url_for('request_reset') }}">Forgot Password?</a>
+        </div>
+        <hr>
+        <div class="text-center">
+          <p>Don't have an account? <a href="{{ url_for('register') }}">Register here</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const togglePassword = document.querySelector('#togglePassword');
+    const password = document.querySelector('#password');
+    if (togglePassword) {
+        togglePassword.addEventListener('click', function (e) {
+            const icon = this.querySelector('i');
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            icon.classList.toggle('bi-eye');
+            icon.classList.toggle('bi-eye-slash');
+        });
+    }
+});
+</script>
+{% endblock %} 

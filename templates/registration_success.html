@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}Registration Successful{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card card-glass">
+                <div class="card-body text-center">
+                    <h1 class="card-title text-success mb-4">Registration Complete!</h1>
+                    <p class="card-text">Thank you for registering. An activation link has been sent to your email address.</p>
+                    <p class="card-text">Please check your inbox and follow the instructions to activate your account.</p>
+                    <div class="mt-4">
+                        <a href="{{ url_for('login') }}" class="btn btn-cool">Proceed to Login</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

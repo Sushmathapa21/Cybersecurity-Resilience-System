@@ -1,0 +1,490 @@
+/* --- Background Image and Overlay --- */
+body {
+  background: url('/static/images/background.jpg') center center no-repeat fixed;
+  background-size: cover;
+  position: relative;
+}
+.background-blur {
+  position: fixed;
+  top: 0; left: 0; width: 100vw; height: 100vh;
+  z-index: 0;
+  background: rgba(0,0,0,0.45); /* This is the line we'll change, it was 0.65 then 0.45 */
+  pointer-events: none;
+}
+
+/* --- Glassmorphism Card Refinement for Contrast --- */
+.glass-card {
+  background: rgba(255,255,255,0.90); /* More opaque for contrast */
+  border-radius: 1.5rem;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.18), 0 2px 8px rgba(0,0,0,0.10);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.22);
+  transition: box-shadow 0.3s;
+}
+.glass-card:hover {
+  box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.22), 0 4px 16px rgba(0,0,0,0.16);
+}
+
+/* --- Hero Section Styles --- */
+.hero-section {
+  min-height: 75vh;
+  display: flex;
+  align-items: center;
+  position: relative;
+  margin-top: -2rem;
+  margin-bottom: 2rem;
+}
+
+.hero-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('/static/images/dashboard.jpg') center center no-repeat;
+  background-size: cover;
+  z-index: 0;
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.4) 100%);
+  z-index: 1;
+}
+
+.hero-title {
+  font-size: 3.5rem;
+  font-weight: 700;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+  margin-bottom: 1.5rem;
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  font-weight: 400;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+  opacity: 0.9;
+}
+
+.btn-hero {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+  color: white;
+  border: none;
+  border-radius: 2rem;
+  font-weight: 600;
+  font-size: 1.1rem;
+  padding: 1rem 2.5rem;
+  box-shadow: 0 8px 25px rgba(99, 102, 241, 0.3);
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.btn-hero:hover {
+  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 12px 35px rgba(99, 102, 241, 0.4);
+}
+
+/* --- Glass Dropdown Menu --- */
+.glass-dropdown {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  padding: 0.5rem 0;
+}
+
+.glass-dropdown .dropdown-item {
+  padding: 0.75rem 1.5rem;
+  transition: all 0.2s ease;
+}
+
+.glass-dropdown .dropdown-item:hover {
+  background: rgba(99, 102, 241, 0.1);
+  color: #6366f1;
+}
+
+.glass-dropdown .dropdown-header {
+  color: #6366f1;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+}
+
+/* --- Status Icons --- */
+.status-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto;
+  border-radius: 50%;
+  background: rgba(99, 102, 241, 0.1);
+}
+
+/* Cool button styles */
+.btn-cool {
+  background: linear-gradient(90deg, #6366f1 0%, #60a5fa 100%);
+  color: #fff;
+  border: none;
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 8px rgba(99,102,241,0.10);
+  font-weight: 600;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+}
+.btn-cool:hover, .btn-cool:focus {
+  background: linear-gradient(90deg, #4f46e5 0%, #2563eb 100%);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(99,102,241,0.18);
+  transform: translateY(-2px) scale(1.03);
+}
+.btn-glass {
+  background: rgba(255,255,255,0.5);
+  border: none;
+  border-radius: 0 0.75rem 0.75rem 0;
+  color: #6366f1;
+  transition: background 0.2s, color 0.2s;
+}
+.btn-glass:hover, .btn-glass:focus {
+  background: rgba(99,102,241,0.08);
+  color: #4f46e5;
+}
+
+/* Password strength feedback colors */
+.password-strength-very-weak { color: #dc3545; }
+.password-strength-weak { color: #fd7e14; }
+.password-strength-good { color: #ffc107; }
+.password-strength-strong { color: #198754; }
+.password-strength-very-strong { color: #0d6efd; }
+
+.card { margin-top: 2rem; border-radius: 1rem; }
+.input-group .btn-outline-secondary, .input-group .btn-glass { border-left: 0; }
+#toggle-password, #toggle-login-password { border-radius: 0 0.75rem 0.75rem 0; }
+#toggle-password:focus, #toggle-login-password:focus { outline: 2px solid #6366f1; }
+#captcha-img { background: #fff; min-width: 120px; min-height: 40px; object-fit: contain; }
+#refresh-captcha { margin-left: 0.5rem; font-size: 1rem; color: #6366f1; text-decoration: none; }
+#refresh-captcha:hover { color: #4f46e5; text-decoration: underline; }
+
+/* Input focus and field details */
+.form-control:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 0.2rem rgba(99,102,241,0.10);
+}
+
+/* Flash message enhancements */
+.custom-flash {
+  border-radius: 0.75rem;
+  box-shadow: 0 2px 8px rgba(99,102,241,0.10);
+  font-size: 1.1rem;
+  background: rgba(236,239,255,0.95);
+  color: #3730a3;
+  border: 1px solid #6366f1;
+}
+
+/* Bootstrap validation feedback enhancements */
+.is-invalid { border-color: #dc3545 !important; box-shadow: 0 0 0 0.2rem rgba(220,53,69,0.08) !important; }
+.is-valid { border-color: #198754 !important; box-shadow: 0 0 0 0.2rem rgba(25,135,84,0.08) !important; }
+.invalid-feedback { display: block; margin-top: 0.25rem; font-size: 0.95em; }
+
+/* Tab Navigation Enhancements */
+.nav-tabs .nav-link {
+  border: none;
+  border-radius: 0.75rem 0.75rem 0 0;
+  color: #6c757d;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.nav-tabs .nav-link:hover {
+  color: #6366f1;
+  background: rgba(99, 102, 241, 0.05);
+}
+
+.nav-tabs .nav-link.active {
+  color: #6366f1;
+  background: white;
+  border-bottom: 3px solid #6366f1;
+}
+
+/* Table Enhancements */
+.table-hover tbody tr:hover {
+  background: rgba(99, 102, 241, 0.05);
+}
+
+.table thead th {
+  border-top: none;
+  font-weight: 600;
+  color: #495057;
+}
+
+/* Modal Enhancements */
+.modal-content {
+  border-radius: 1rem;
+  border: none;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 1rem 1rem 0 0;
+}
+
+.modal-footer {
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 0 0 1rem 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.1rem;
+  }
+  
+  .btn-hero {
+    font-size: 1rem;
+    padding: 0.875rem 2rem;
+  }
+  
+  .min-vh-75 {
+    min-height: 60vh;
+  }
+}
+
+@media (max-width: 576px) {
+  .card, .glass-card { margin-top: 1rem; }
+  #captcha-img { min-width: 80px; min-height: 32px; }
+  
+  .hero-title {
+    font-size: 2rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+  
+  .btn-hero {
+    font-size: 0.9rem;
+    padding: 0.75rem 1.5rem;
+  }
+}
+
+/* Logo in navbar */
+.navbar-logo {
+  height: 30px;
+  width: auto;
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 0.5rem;
+  filter: brightness(0.95) drop-shadow(0 1px 2px rgba(0,0,0,0.12));
+}
+
+/* --- Dashboard Background and Overlay --- */
+.dashboard-bg {
+  background: url('/static/images/dashboard_background.jpg') center center no-repeat fixed;
+  background-size: cover;
+  min-height: 100vh;
+  position: relative;
+}
+.dashboard-overlay {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.4);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Modal overlay for dashboard/logout/account delete */
+.modal-backdrop-custom {
+  background: rgba(0,0,0,0.6) !important;
+  z-index: 1050;
+}
+
+/* --- Quick Actions Button Enhancements --- */
+.btn-outline-primary, .btn-outline-info, .btn-outline-warning {
+  transition: all 0.2s ease;
+  border-width: 2px;
+}
+
+.btn-outline-primary:hover, .btn-outline-info:hover, .btn-outline-warning:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-outline-primary:active, .btn-outline-info:active, .btn-outline-warning:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Quick Actions specific styling */
+.d-grid.gap-2 .btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.d-grid.gap-2 .btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.d-grid.gap-2 .btn:hover::before {
+  left: 100%;
+}
+
+/* --- 2FA Setup Page Enhancements --- */
+.qr-code-placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.qr-code-placeholder .bg-white {
+  min-width: 200px;
+  min-height: 200px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed #dee2e6 !important;
+}
+
+.qr-code-placeholder .bg-white:hover {
+  border-color: #6366f1 !important;
+  background-color: #f8f9ff !important;
+}
+
+/* 2FA Status Cards */
+.card.border-success .card-header {
+  background: linear-gradient(135deg, #198754 0%, #20c997 100%) !important;
+}
+
+.card.border-warning .card-header {
+  background: linear-gradient(135deg, #fd7e14 0%, #ffc107 100%) !important;
+}
+
+/* 2FA Form Enhancements */
+.form-control-lg {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.5rem;
+  text-align: center;
+}
+
+.form-control-lg:focus {
+  border-color: #6366f1;
+  box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25);
+}
+
+/* 2FA Status Icons */
+.bi-shield-check {
+  color: #198754;
+}
+
+.bi-shield-lock {
+  color: #fd7e14;
+}
+
+.bi-shield-x {
+  color: #dc3545;
+}
+
+/* --- Password Change Form Validation Enhancements --- */
+.form-control.is-invalid {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.form-control.is-invalid:focus {
+  border-color: #dc3545;
+  box-shadow: 0 0 0 0.2rem rgba(220, 53, 69, 0.25);
+}
+
+.invalid-feedback {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.875em;
+  color: #dc3545;
+}
+
+.invalid-feedback.d-block {
+  display: block !important;
+}
+
+/* Input group validation styling */
+.input-group .form-control.is-invalid {
+  border-right: 0;
+}
+
+.input-group .form-control.is-invalid + .btn {
+  border-color: #dc3545;
+}
+
+/* Success state styling */
+.form-control.is-valid {
+  border-color: #198754;
+  box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+}
+
+.form-control.is-valid:focus {
+  border-color: #198754;
+  box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+}
+
+/* Password strength meter enhancements */
+#password-strength-meter {
+  font-size: 0.875em;
+  font-weight: 500;
+  margin-top: 0.5rem;
+}
+
+.password-strength-meter.weak {
+  color: #dc3545;
+}
+
+.password-strength-meter.medium {
+  color: #fd7e14;
+}
+
+.password-strength-meter.strong {
+  color: #198754;
+}
+
+.password-strength-bar {
+  width: 0%;
+  height: 10px;
+  border-radius: 5px;
+  background: transparent;
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+  transition: width 0.4s cubic-bezier(0.4,0,0.2,1), background 0.4s cubic-bezier(0.4,0,0.2,1);
+}
+.password-strength-bar.very-weak {
+  background: #dc3545;
+}
+.password-strength-bar.weak {
+  background: #fd7e14;
+}
+.password-strength-bar.good {
+  background: #ffc107;
+}
+.password-strength-bar.strong {
+  background: #198754;
+}
+.password-strength-bar.very-strong {
+  background: #0d6efd;
+} 

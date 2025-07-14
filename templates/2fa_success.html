@@ -1,0 +1,171 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <div class="card glass-card shadow-lg mt-4">
+      <div class="card-header bg-transparent border-0 pb-0">
+        <div class="text-center">
+          <div class="bg-success bg-gradient rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+            <i class="bi bi-shield-check text-white fs-1"></i>
+          </div>
+          <h2 class="mb-2 text-success">2FA Successfully Enabled!</h2>
+          <p class="text-muted mb-0">Your account is now protected with two-factor authentication</p>
+        </div>
+      </div>
+      <div class="card-body">
+        <!-- Success Message -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="alert alert-success border-0">
+              <h5 class="alert-heading">
+                <i class="bi bi-check-circle me-2"></i>Setup Complete!
+              </h5>
+              <p class="mb-0">
+                Congratulations! Your account is now secured with two-factor authentication. 
+                From now on, you'll need to enter a verification code from your authenticator app when logging in.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- What Happens Next -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <h4 class="mb-3">
+              <i class="bi bi-arrow-right-circle me-2"></i>What Happens Next?
+            </h4>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <div class="card border-0 bg-light h-100">
+                  <div class="card-body text-center">
+                    <i class="bi bi-laptop text-primary fs-1 mb-3"></i>
+                    <h6>Next Login</h6>
+                    <p class="small text-muted mb-0">When you log in next time, you'll be prompted to enter a 6-digit code from your authenticator app</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="card border-0 bg-light h-100">
+                  <div class="card-body text-center">
+                    <i class="bi bi-phone text-success fs-1 mb-3"></i>
+                    <h6>Keep Your App Ready</h6>
+                    <p class="small text-muted mb-0">Make sure your authenticator app is easily accessible on your phone</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Security Tips -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <h4 class="mb-3">
+              <i class="bi bi-shield-check me-2"></i>Security Best Practices
+            </h4>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <div class="d-flex align-items-start">
+                  <i class="bi bi-check-circle-fill text-success fs-5 me-3 mt-1"></i>
+                  <div>
+                    <h6>Keep Your Device Secure</h6>
+                    <p class="small text-muted mb-0">Use a strong passcode or biometric lock on your phone</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="d-flex align-items-start">
+                  <i class="bi bi-check-circle-fill text-success fs-5 me-3 mt-1"></i>
+                  <div>
+                    <h6>Backup Your App</h6>
+                    <p class="small text-muted mb-0">Consider using an app like Authy that supports cloud backup</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="d-flex align-items-start">
+                  <i class="bi bi-check-circle-fill text-success fs-5 me-3 mt-1"></i>
+                  <div>
+                    <h6>Don't Share Your Device</h6>
+                    <p class="small text-muted mb-0">Keep your authenticator app private and secure</p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="d-flex align-items-start">
+                  <i class="bi bi-check-circle-fill text-success fs-5 me-3 mt-1"></i>
+                  <div>
+                    <h6>Regular Updates</h6>
+                    <p class="small text-muted mb-0">Keep your authenticator app updated to the latest version</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recovery Information -->
+        <div class="row mb-4">
+          <div class="col-12">
+            <div class="card border-warning">
+              <div class="card-header bg-warning text-dark">
+                <h6 class="mb-0">
+                  <i class="bi bi-exclamation-triangle me-2"></i>Important: Account Recovery
+                </h6>
+              </div>
+              <div class="card-body">
+                <p class="text-muted mb-3">
+                  If you ever lose access to your authenticator app or device, you may need to contact support to regain access to your account.
+                </p>
+                <div class="row g-2">
+                  <div class="col-md-6">
+                    <div class="d-flex align-items-center">
+                      <i class="bi bi-envelope text-primary me-2"></i>
+                      <span class="small">support@secureapp.com</span>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="d-flex align-items-center">
+                      <i class="bi bi-telephone text-primary me-2"></i>
+                      <span class="small">+1 (555) 123-4567</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="row">
+          <div class="col-12 text-center">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+              <a href="{{ url_for('dashboard') }}" class="btn btn-cool btn-lg px-5">
+                <i class="bi bi-house me-2"></i>Go to Dashboard
+              </a>
+              <a href="{{ url_for('profile') }}#2fa" class="btn btn-outline-secondary btn-lg px-5">
+                <i class="bi bi-gear me-2"></i>2FA Settings
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Additional Info -->
+        <div class="row mt-4">
+          <div class="col-12">
+            <div class="alert alert-info border-0">
+              <h6 class="alert-heading">
+                <i class="bi bi-lightbulb me-2"></i>Pro Tip
+              </h6>
+              <p class="mb-0">
+                You can manage your 2FA settings anytime from your profile page. 
+                This includes disabling 2FA, forgetting trusted devices, and viewing your security status.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} 
